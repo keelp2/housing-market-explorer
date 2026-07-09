@@ -188,6 +188,11 @@ function initMap() {
 }
 
 function populateControls() {
+  // Metro count + last updated
+  document.getElementById("metroCount").textContent = data.length;
+  document.getElementById("lastUpdated").textContent = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+  // Metro compare selects
   const names = data.map(d => d.RegionName).sort();
   ["compareA", "compareB"].forEach((id, i) => {
     const sel = document.getElementById(id);
@@ -195,6 +200,19 @@ function populateControls() {
       const opt = document.createElement("option");
       opt.value = n; opt.textContent = n;
       if (j === i) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+
+  // State compare selects
+  const states = [...new Set(data.map(d => d.state_abbr))].filter(Boolean).sort();
+  ["compareStateA", "compareStateB"].forEach((id, i) => {
+    const sel = document.getElementById(id);
+    const defaults = ["IL", "TX"];
+    states.forEach((s, j) => {
+      const opt = document.createElement("option");
+      opt.value = s; opt.textContent = s;
+      if (s === defaults[i]) opt.selected = true;
       sel.appendChild(opt);
     });
   });
@@ -316,6 +334,22 @@ function updateCompare() {
   document.getElementById("compareBody").innerHTML = html;
 }
 
+function updateStateCompare() {
+  const sa = document.getElementById("compareStateA").value;
+  const sb = document.getElementById("compareStateB").value;
+  const sdA = stateData[sa];
+  const sdB = stateData[sb];
+  if (!sdA || !sdB) return;
+
+  let html = `<table><thead><tr><th>Metric</th><th>${sa}</th><th>${sb}</th></tr></thead><tbody>`;
+  COMPARE_KEYS.forEach(k => {
+    if (!METRICS[k]) return;
+    html += `<tr><td>${METRICS[k].label}</td><td>${fmtVal(sdA[k], k)}</td><td>${fmtVal(sdB[k], k)}</td></tr>`;
+  });
+  html += "</tbody></table>";
+  document.getElementById("compareStateBody").innerHTML = html;
+}
+
 function setupEvents() {
   document.getElementById("mapMetric").addEventListener("change", updateMap);
 
@@ -334,9 +368,29 @@ function setupEvents() {
     updateMap();
   });
 
-  // Compare
+  // Compare — metro
   document.getElementById("compareA").addEventListener("change", updateCompare);
   document.getElementById("compareB").addEventListener("change", updateCompare);
+
+  // Compare — state
+  document.getElementById("compareStateA").addEventListener("change", updateStateCompare);
+  document.getElementById("compareStateB").addEventListener("change", updateStateCompare);
+
+  // Compare tab toggle
+  document.getElementById("cmpTabMetro").addEventListener("click", () => {
+    document.getElementById("cmpTabMetro").classList.add("active");
+    document.getElementById("cmpTabState").classList.remove("active");
+    document.getElementById("cmpMetroView").style.display = "";
+    document.getElementById("cmpStateView").style.display = "none";
+  });
+
+  document.getElementById("cmpTabState").addEventListener("click", () => {
+    document.getElementById("cmpTabState").classList.add("active");
+    document.getElementById("cmpTabMetro").classList.remove("active");
+    document.getElementById("cmpStateView").style.display = "";
+    document.getElementById("cmpMetroView").style.display = "none";
+    updateStateCompare();
+  });
 
   // Card close
   document.getElementById("cardClose").addEventListener("click", () => {
