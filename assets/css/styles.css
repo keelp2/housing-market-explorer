@@ -280,7 +280,7 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 420px;
+  width: 480px;
   z-index: 600;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(20px);
@@ -393,6 +393,15 @@ body {
 .compare-body td:first-child {
   color: #64748b;
   font-size: 0.68rem;
+}
+
+.compare-body td.win {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.compare-body td.lose {
+  color: #94a3b8;
 }
 
 .compare-body tr:hover td {

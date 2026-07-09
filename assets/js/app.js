@@ -383,7 +383,15 @@ function buildCompareTable(dataA, dataB, nameA, nameB) {
     html += `<tr><td colspan="3" style="font-weight:700;color:#4f46e5;padding:10px 5px 4px;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;border-bottom:none">${section.label}</td></tr>`;
     section.keys.forEach(k => {
       if (!METRICS[k]) return;
-      html += `<tr><td>${METRICS[k].label}</td><td>${fmtVal(dataA[k], k)}</td><td>${fmtVal(dataB[k], k)}</td></tr>`;
+      const a = dataA[k], b = dataB[k];
+      let clsA = "", clsB = "";
+      if (a != null && b != null && !isNaN(a) && !isNaN(b) && a !== b) {
+        const rev = REVERSE_METRICS.has(k);
+        const aWins = rev ? a < b : a > b;
+        clsA = aWins ? ' class="win"' : ' class="lose"';
+        clsB = aWins ? ' class="lose"' : ' class="win"';
+      }
+      html += `<tr><td>${METRICS[k].label}</td><td${clsA}>${fmtVal(a, k)}</td><td${clsB}>${fmtVal(b, k)}</td></tr>`;
     });
   });
   html += "</tbody></table>";
