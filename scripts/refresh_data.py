@@ -79,6 +79,8 @@ def pull_redfin():
     url = "https://redfin-public-data.s3.us-west-2.amazonaws.com/redfin_market_tracker/redfin_metro_market_tracker.tsv000.gz"
     try:
         df = pd.read_csv(url, sep="\t", compression="gzip")
+        # Normalize column names to lowercase
+        df.columns = df.columns.str.lower()
         # Keep latest month only
         df["period_end"] = pd.to_datetime(df["period_end"])
         latest = df["period_end"].max()
@@ -312,6 +314,15 @@ def geocode_and_export(df):
 
     size_kb = OUT.stat().st_size / 1024
     log("Export", "OK", f"{len(records)} metros → {OUT.name} ({size_kb:.0f} KB)")
+
+    # Save historical snapshot
+    history_dir = ROOT / "history"
+    history_dir.mkdir(exist_ok=True)
+    from datetime import date
+    snapshot = history_dir / f"{date.today().isoformat()}.json"
+    with open(snapshot, "w") as f:
+        json.dump(records, f, separators=(",", ":"))
+    log("History", "OK", f"Snapshot saved: {snapshot.name}")
 
 
 # ═══════════════════════════════════════════

@@ -17,6 +17,10 @@ body {
   z-index: 0;
 }
 
+.leaflet-top.leaflet-left {
+  top: 80px !important;
+}
+
 /* ── Floating search ── */
 .float-search {
   position: fixed;
