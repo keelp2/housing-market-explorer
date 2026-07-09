@@ -41,6 +41,8 @@ const METRICS = {
   electricity_cents_kwh: { label: "Electricity", fmt: " ¢/kWh", dec: 1 },
   rpp: { label: "Cost of Living", fmt: "", dec: 1 },
   pct_wfh: { label: "% Work from Home", fmt: "%", dec: 1 },
+  price_to_rent: { label: "Price-to-Rent", fmt: "x", dec: 1 },
+  gross_rental_yield: { label: "Rental Yield", fmt: "%", dec: 1 },
 };
 
 // Lower = better (green) for these metrics
@@ -60,12 +62,12 @@ const REVERSE_METRICS = new Set([
   "rpp",                   // lower cost of living = better
 ]);
 
-const KEY_STATS = ["zhvi_current", "zori_rent", "median_hh_income", "price_to_income", "payment_pct_income", "population"];
+const KEY_STATS = ["zhvi_current", "median_hh_income", "population"];
 
 const CATEGORIES = {
-  affordability: ["zhvi_current", "zori_rent", "median_hh_income", "price_to_income", "payment_pct_income", "monthly_payment"],
+  affordability: ["zori_rent", "price_to_income", "payment_pct_income", "monthly_payment", "price_to_rent", "gross_rental_yield"],
   market: ["price_chg_1yr_pct", "price_chg_5yr_pct", "r_months_supply", "r_median_dom", "r_price_drops", "r_sold_above_list"],
-  economy: ["population", "pop_growth_ann_pct", "income_growth_ann_pct", "migration_rate_per_1000", "bachelors_pct", "poverty_rate", "homeownership_rate", "median_age", "pct_wfh"],
+  economy: ["pop_growth_ann_pct", "income_growth_ann_pct", "migration_rate_per_1000", "bachelors_pct", "poverty_rate", "homeownership_rate", "median_age", "pct_wfh"],
   quality: ["fema_risk_score", "median_aqi", "mean_commute_min", "electricity_cents_kwh", "rpp"],
 };
 
@@ -79,15 +81,20 @@ const COMPARE_SECTIONS = [
 const COMPARE_KEYS = COMPARE_SECTIONS.flatMap(s => s.keys);
 
 // ── Formatting ──
+// Fields stored as 0-1 that should display as 0-100%
+const SCALE_100 = new Set(["r_price_drops", "r_sold_above_list", "r_sale_to_list"]);
+
 function fmtVal(val, key) {
   if (val == null || isNaN(val)) return "—";
+  let v = val;
+  if (SCALE_100.has(key)) v = val * 100;
   const m = METRICS[key];
-  if (!m) return String(val);
-  if (m.fmt === "$") return "$" + val.toLocaleString("en-US", { maximumFractionDigits: m.dec });
-  if (m.fmt === "%") return val.toFixed(m.dec) + "%";
-  if (m.fmt === "x") return val.toFixed(m.dec) + "x";
-  if (m.fmt === ",") return val.toLocaleString("en-US");
-  return val.toFixed(m.dec) + m.fmt;
+  if (!m) return String(v);
+  if (m.fmt === "$") return "$" + v.toLocaleString("en-US", { maximumFractionDigits: m.dec });
+  if (m.fmt === "%") return v.toFixed(m.dec) + "%";
+  if (m.fmt === "x") return v.toFixed(m.dec) + "x";
+  if (m.fmt === ",") return v.toLocaleString("en-US");
+  return v.toFixed(m.dec) + m.fmt;
 }
 
 function statCard(key, val) {
