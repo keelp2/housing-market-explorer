@@ -334,49 +334,65 @@ body {
 
 .compare-selects {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .compare-selects select {
   flex: 1;
   background: rgba(0,0,0,0.04);
   border: 1px solid rgba(0,0,0,0.08);
-  padding: 8px 10px;
+  padding: 7px 8px;
   border-radius: 8px;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   outline: none;
   color: #1e293b;
+  min-width: 0;
 }
 
 .vs {
   color: #94a3b8;
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.compare-body {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
 }
 
 .compare-body table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
 }
 
 .compare-body th {
   text-align: left;
-  padding: 8px 6px;
+  padding: 6px 5px;
   color: #64748b;
   font-weight: 600;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border-bottom: 2px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.96);
 }
 
 .compare-body td {
-  padding: 7px 6px;
+  padding: 5px 5px;
   border-bottom: 1px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.compare-body td:first-child {
+  color: #64748b;
+  font-size: 0.68rem;
 }
 
 .compare-body tr:hover td {

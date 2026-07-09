@@ -69,12 +69,14 @@ const CATEGORIES = {
   quality: ["fema_risk_score", "median_aqi", "mean_commute_min", "electricity_cents_kwh", "rpp"],
 };
 
-const COMPARE_KEYS = [
-  "zhvi_current", "zori_rent", "median_hh_income", "price_to_income", "payment_pct_income",
-  "monthly_payment", "price_chg_1yr_pct", "r_months_supply", "r_median_dom", "population",
-  "pop_growth_ann_pct", "income_growth_ann_pct", "bachelors_pct", "poverty_rate",
-  "homeownership_rate", "fema_risk_score", "median_aqi", "mean_commute_min",
+const COMPARE_SECTIONS = [
+  { label: "Affordability", keys: ["zhvi_current", "zori_rent", "median_hh_income", "price_to_income", "payment_pct_income", "monthly_payment"] },
+  { label: "Market", keys: ["price_chg_1yr_pct", "price_chg_5yr_pct", "r_months_supply", "r_median_dom", "r_price_drops", "r_sold_above_list"] },
+  { label: "Economy", keys: ["population", "pop_growth_ann_pct", "income_growth_ann_pct", "migration_rate_per_1000", "bachelors_pct", "poverty_rate", "homeownership_rate", "pct_wfh"] },
+  { label: "Quality of Life", keys: ["fema_risk_score", "median_aqi", "mean_commute_min", "electricity_cents_kwh", "rpp"] },
 ];
+
+const COMPARE_KEYS = COMPARE_SECTIONS.flatMap(s => s.keys);
 
 // ── Formatting ──
 function fmtVal(val, key) {
@@ -324,17 +326,24 @@ function showTab(cat, d) {
   });
 }
 
+function buildCompareTable(dataA, dataB, nameA, nameB) {
+  let html = `<table><thead><tr><th>Metric</th><th>${nameA}</th><th>${nameB}</th></tr></thead><tbody>`;
+  COMPARE_SECTIONS.forEach(section => {
+    html += `<tr><td colspan="3" style="font-weight:700;color:#4f46e5;padding:10px 5px 4px;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;border-bottom:none">${section.label}</td></tr>`;
+    section.keys.forEach(k => {
+      if (!METRICS[k]) return;
+      html += `<tr><td>${METRICS[k].label}</td><td>${fmtVal(dataA[k], k)}</td><td>${fmtVal(dataB[k], k)}</td></tr>`;
+    });
+  });
+  html += "</tbody></table>";
+  return html;
+}
+
 function updateCompare() {
   const a = data.find(d => d.RegionName === document.getElementById("compareA").value);
   const b = data.find(d => d.RegionName === document.getElementById("compareB").value);
   if (!a || !b) return;
-  let html = `<table><thead><tr><th>Metric</th><th>${a.RegionName.split(",")[0]}</th><th>${b.RegionName.split(",")[0]}</th></tr></thead><tbody>`;
-  COMPARE_KEYS.forEach(k => {
-    if (!METRICS[k]) return;
-    html += `<tr><td>${METRICS[k].label}</td><td>${fmtVal(a[k], k)}</td><td>${fmtVal(b[k], k)}</td></tr>`;
-  });
-  html += "</tbody></table>";
-  document.getElementById("compareBody").innerHTML = html;
+  document.getElementById("compareBody").innerHTML = buildCompareTable(a, b, a.RegionName.split(",")[0], b.RegionName.split(",")[0]);
 }
 
 function updateStateCompare() {
@@ -343,14 +352,7 @@ function updateStateCompare() {
   const sdA = stateData[sa];
   const sdB = stateData[sb];
   if (!sdA || !sdB) return;
-
-  let html = `<table><thead><tr><th>Metric</th><th>${sa}</th><th>${sb}</th></tr></thead><tbody>`;
-  COMPARE_KEYS.forEach(k => {
-    if (!METRICS[k]) return;
-    html += `<tr><td>${METRICS[k].label}</td><td>${fmtVal(sdA[k], k)}</td><td>${fmtVal(sdB[k], k)}</td></tr>`;
-  });
-  html += "</tbody></table>";
-  document.getElementById("compareStateBody").innerHTML = html;
+  document.getElementById("compareStateBody").innerHTML = buildCompareTable(sdA, sdB, sa, sb);
 }
 
 function setupEvents() {
