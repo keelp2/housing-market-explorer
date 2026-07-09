@@ -43,9 +43,21 @@ const METRICS = {
   pct_wfh: { label: "% Work from Home", fmt: "%", dec: 1 },
 };
 
+// Lower = better (green) for these metrics
 const REVERSE_METRICS = new Set([
-  "price_to_income", "payment_pct_income", "poverty_rate", "fema_risk_score",
-  "median_aqi", "r_median_dom", "r_price_drops", "mean_commute_min",
+  "zhvi_current",          // cheaper homes = better
+  "zori_rent",             // cheaper rent = better
+  "price_to_income",       // lower ratio = more affordable
+  "payment_pct_income",    // lower % = more affordable
+  "monthly_payment",       // lower payment = better
+  "price_to_rent",         // lower = buying favored over renting
+  "poverty_rate",          // lower poverty = better
+  "fema_risk_score",       // lower risk = better
+  "median_aqi",            // lower AQI = cleaner air
+  "r_median_dom",          // fewer days = hotter market
+  "mean_commute_min",      // shorter commute = better
+  "electricity_cents_kwh", // cheaper energy = better
+  "rpp",                   // lower cost of living = better
 ]);
 
 const KEY_STATS = ["zhvi_current", "zori_rent", "median_hh_income", "price_to_income", "payment_pct_income", "population"];
