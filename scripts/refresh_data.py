@@ -232,24 +232,32 @@ def build_dataset(zillow, redfin, mortgage_rate, census):
             rf_merge = rf_merge.rename(columns={"region": "RegionName"})
             df = df.merge(rf_merge, on="RegionName", how="left")
 
-    # Merge Census
+    # Merge Census by fuzzy name match (Zillow RegionID != CBSA code)
     if census is not None:
-        # Match on CBSA code or name
         census_merge = census.copy()
         pop = census_merge["population"]
         census_merge["poverty_rate"] = (census_merge["poverty_count"] / pop * 100).round(1)
         census_merge["bachelors_pct"] = (census_merge["bachelors_count"] / pop * 100).round(1)
-        census_merge["homeownership_rate"] = (census_merge["owner_occupied"] / (pop * 0.38) * 100).clip(upper=95).round(1)  # rough HH estimate
+        census_merge["homeownership_rate"] = (census_merge["owner_occupied"] / (pop * 0.38) * 100).clip(upper=95).round(1)
         census_merge["pct_wfh"] = (census_merge["wfh"] / census_merge["commuters_total"] * 100).round(1)
 
-        keep = ["cbsa_code", "median_hh_income", "median_rent_census", "population",
+        # Parse short name from Census NAME ("Boston-Cambridge-Newton, MA-NH Metro Area" → "Boston")
+        census_merge["_join_city"] = census_merge["NAME"].str.split(",").str[0].str.split("-").str[0].str.strip().str.lower()
+        census_merge["_join_state"] = census_merge["NAME"].str.extract(r",\s*([A-Z]{2})")[0]
+
+        # Parse short name from Zillow ("Chicago, IL" → "chicago")
+        df["_join_city"] = df["RegionName"].str.split(",").str[0].str.split("-").str[0].str.strip().str.lower()
+        df["_join_state"] = df["RegionName"].str.extract(r",\s*([A-Z]{2})")[0]
+
+        keep = ["_join_city", "_join_state", "median_hh_income", "median_rent_census", "population",
                 "median_home_value_census", "median_age", "poverty_rate", "bachelors_pct",
                 "homeownership_rate", "pct_wfh"]
         census_merge = census_merge[[c for c in keep if c in census_merge.columns]]
 
-        df["cbsa_code"] = df["cbsa_code"].astype(str)
-        census_merge["cbsa_code"] = census_merge["cbsa_code"].astype(str)
-        df = df.merge(census_merge, on="cbsa_code", how="left", suffixes=("", "_census"))
+        df = df.merge(census_merge, on=["_join_city", "_join_state"], how="left", suffixes=("", "_census"))
+        df = df.drop(columns=["_join_city", "_join_state"], errors="ignore")
+        matched = df["population"].notna().sum()
+        log("Census", "OK", f"Matched {matched}/{len(df)} metros by name")
 
     # Derived metrics
     if mortgage_rate and "zhvi_current" in df.columns and "median_hh_income" in df.columns:
@@ -271,7 +279,8 @@ def build_dataset(zillow, redfin, mortgage_rate, census):
     if "StateName" in df.columns:
         df["state_abbr"] = df["StateName"].str.strip()
 
-    # Drop rows without a home price
+    # Drop national aggregate and rows without a home price
+    df = df[df["RegionName"] != "United States"]
     df = df.dropna(subset=["zhvi_current"]).reset_index(drop=True)
 
     log("Build", "OK", f"{len(df)} metros, {len(df.columns)} columns")
