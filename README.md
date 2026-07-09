@@ -1,6 +1,6 @@
 # U.S. Housing Market Explorer
 
-Interactive map-based dashboard exploring housing statistics across 377 U.S. metro areas.
+Interactive map-based dashboard exploring housing market statistics across U.S. metro areas.
 
 **Live:** [keelp2.github.io/housing-market-explorer](https://keelp2.github.io/housing-market-explorer)
 
@@ -31,7 +31,7 @@ index.html              ← static site (GitHub Pages)
 assets/
   css/styles.css        ← styling
   js/app.js             ← all client-side logic
-  data.json             ← 377 metros, 78 columns (auto-updated weekly)
+  data.json             ← metro data (auto-updated weekly)
   us-states.json        ← GeoJSON state boundaries
 scripts/
   refresh_data.py       ← weekly data pull (runs via GitHub Actions)
