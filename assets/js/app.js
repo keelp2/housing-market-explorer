@@ -190,7 +190,10 @@ function initMap() {
 function populateControls() {
   // Metro count + last updated
   document.getElementById("metroCount").textContent = data.length;
-  document.getElementById("lastUpdated").textContent = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const dataDate = data[0]?._data_date;
+  document.getElementById("lastUpdated").textContent = dataDate
+    ? new Date(dataDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : "Unknown";
 
   // Metro compare selects
   const names = data.map(d => d.RegionName).sort();
