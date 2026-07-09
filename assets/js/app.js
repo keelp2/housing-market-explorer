@@ -97,9 +97,41 @@ function fmtVal(val, key) {
   return v.toFixed(m.dec) + m.fmt;
 }
 
+const METRIC_TIPS = {
+  zhvi_current: "Zillow Home Value Index — median estimated home value for the metro area.",
+  zori_rent: "Zillow Observed Rent Index — median monthly rent for the metro area.",
+  median_hh_income: "Median household income from Census ACS.",
+  price_to_income: "Home price divided by annual income. Lower = more affordable. Under 3x is historically normal.",
+  payment_pct_income: "Estimated monthly mortgage payment as a % of monthly income. Under 28% is considered comfortable.",
+  monthly_payment: "Estimated monthly mortgage payment (20% down, 30yr fixed at current rate).",
+  price_to_rent: "Home price divided by annual rent. Under 15 favors buying, over 20 favors renting.",
+  gross_rental_yield: "Annual rent as a % of home price. Higher = better for investors.",
+  price_chg_1yr_pct: "Home price change over the past 12 months.",
+  price_chg_5yr_pct: "Home price change over the past 5 years.",
+  r_months_supply: "Months of inventory at current sales pace. Under 4 = seller's market, over 6 = buyer's market.",
+  r_median_dom: "Median days on market before a home sells.",
+  r_price_drops: "Percentage of active listings with a price reduction.",
+  r_sold_above_list: "Percentage of homes that sold above their list price.",
+  population: "Metro area population from Census ACS.",
+  pop_growth_ann_pct: "Annual population growth rate.",
+  income_growth_ann_pct: "Annual median household income growth rate.",
+  migration_rate_per_1000: "Net migration per 1,000 residents (IRS tax return data).",
+  bachelors_pct: "% of adults with a bachelor's degree or higher.",
+  poverty_rate: "% of population below the poverty line.",
+  homeownership_rate: "% of occupied housing units that are owner-occupied.",
+  median_age: "Median age of the population.",
+  pct_wfh: "% of workers who work from home.",
+  fema_risk_score: "FEMA National Risk Index — composite natural disaster risk (0-100, higher = more risk).",
+  median_aqi: "Median Air Quality Index. Lower is better. Under 50 = good air quality.",
+  mean_commute_min: "Average one-way commute time in minutes.",
+  electricity_cents_kwh: "Average residential electricity cost in cents per kWh.",
+  rpp: "Regional Price Parity — cost of living relative to national average (100). Over 100 = more expensive.",
+};
+
 function statCard(key, val) {
   const m = METRICS[key];
-  return `<div class="stat-card"><div class="label">${m ? m.label : key}</div><div class="value">${fmtVal(val, key)}</div></div>`;
+  const tip = METRIC_TIPS[key] ? `<div class="tip">${METRIC_TIPS[key]}</div>` : "";
+  return `<div class="stat-card"><div class="label">${m ? m.label : key}</div><div class="value">${fmtVal(val, key)}</div>${tip}</div>`;
 }
 
 // ── Color scale ──

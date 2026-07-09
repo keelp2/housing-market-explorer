@@ -470,11 +470,54 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
+/* ── Metric tooltip ── */
+.stat-card {
+  position: relative;
+  cursor: help;
+}
+
+.stat-card .tip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #e2e8f0;
+  font-size: 0.65rem;
+  line-height: 1.4;
+  padding: 8px 10px;
+  border-radius: 8px;
+  width: 200px;
+  z-index: 900;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  pointer-events: none;
+}
+
+.stat-card:hover .tip {
+  display: block;
+}
+
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  .float-search { left: 10px; right: 10px; min-width: auto; top: 10px; }
-  .float-metric { top: 70px; right: 10px; }
-  .float-card { left: 10px; right: 10px; width: auto; bottom: 10px; max-height: 50vh; }
+  .float-search { left: 8px; right: 8px; min-width: auto; top: 8px; padding: 8px 12px; }
+  .search-brand { font-size: 0.75rem; }
+  .float-search input { font-size: 0.8rem; padding: 6px 10px; }
+  .float-controls-right { top: 60px; right: 8px; flex-direction: column; gap: 6px; }
+  .vt { font-size: 0.7rem; padding: 5px 10px; }
+  .float-controls-right select { font-size: 0.75rem; padding: 7px 12px; }
+  .float-card { left: 8px; right: 8px; width: auto; bottom: 8px; max-height: 45vh; padding: 14px 16px; }
+  .float-card h2 { font-size: 1rem; }
+  .card-stats { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .stat-card { padding: 8px 10px; }
+  .stat-card .label { font-size: 0.58rem; }
+  .stat-card .value { font-size: 0.85rem; }
+  .ctab { font-size: 0.65rem; padding: 5px 3px; }
+  .card-tab-content { grid-template-columns: repeat(2, 1fr); gap: 6px; }
   .compare-panel { width: 100%; }
-  .float-compare-btn { bottom: 10px; right: 10px; }
+  .float-compare-btn { bottom: 8px; right: 8px; font-size: 0.78rem; padding: 8px 16px; }
+  .float-legend { min-width: 180px; padding: 8px 12px; bottom: 32px; }
+  .float-credit { font-size: 0.6rem; padding: 3px 8px; }
+  .leaflet-top.leaflet-left { top: 110px !important; }
+  .stat-card .tip { display: none !important; }
 }
