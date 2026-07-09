@@ -320,7 +320,19 @@ function showDetail(d) {
 function showTab(cat, d) {
   const content = document.getElementById("cardTabContent");
   const keys = CATEGORIES[cat] || [];
-  content.innerHTML = keys.filter(k => METRICS[k]).map(k => statCard(k, d[k])).join("");
+  const cards = keys.filter(k => METRICS[k]).map(k => statCard(k, d[k])).join("");
+
+  // Source date for this category
+  const src = d._source_dates || {};
+  const catSources = {
+    affordability: src.zillow ? `Prices: ${src.zillow} · Census: ${src.census || "—"}` : "",
+    market: src.zillow ? `Zillow/Redfin: ${src.zillow}` : "",
+    economy: src.census ? `Census ACS: ${src.census} · Migration: ${src.migration || "—"}` : "",
+    quality: [src.fema ? `FEMA: ${src.fema}` : "", src.aqi ? `AQI: ${src.aqi}` : ""].filter(Boolean).join(" · "),
+  };
+  const sourceNote = catSources[cat] ? `<div style="font-size:0.6rem;color:#94a3b8;margin-top:8px;text-align:center">Data as of: ${catSources[cat]}</div>` : "";
+
+  content.innerHTML = cards + sourceNote;
   document.querySelectorAll(".ctab").forEach(t => {
     t.classList.toggle("active", t.dataset.tab === cat);
   });
