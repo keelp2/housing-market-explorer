@@ -50,7 +50,7 @@ def log(src, status, msg):
 # ═══════════════════════════════════════════
 def pull_zillow():
     print("\n=== Zillow ===")
-    base = "https://files.zillowstatic.com/research/public_v2"
+    base = "https://files.zillowstatic.com/research/public_csvs"
     files = {
         "zhvi_metro": f"{base}/zhvi/Metro_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv",
         "zori_metro": f"{base}/zori/Metro_zori_uc_sfrcondomfr_sm_sa_month.csv",
