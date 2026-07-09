@@ -190,8 +190,7 @@ function initMap() {
 }
 
 function populateControls() {
-  // Metro count + last updated
-  document.getElementById("metroCount").textContent = data.length;
+  // Last updated
   const dataDate = data[0]?._data_date;
   document.getElementById("lastUpdated").textContent = dataDate
     ? new Date(dataDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
