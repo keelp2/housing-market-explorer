@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>U.S. Housing Market Explorer</title>
+  <meta name="description" content="Explore housing market statistics across 377 U.S. metro areas.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%234f46e5'/><text x='32' y='42' font-family='system-ui' font-size='28' font-weight='700' fill='white' text-anchor='middle'>HM</text></svg>">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <!-- Full-screen map -->
+  <div id="map"></div>
+
+  <!-- Floating search bar -->
+  <div class="float-search">
+    <div class="search-brand">Housing Explorer</div>
+    <input type="text" id="metroSearch" placeholder="Search a city..." autocomplete="off">
+    <div id="searchResults" class="search-dropdown"></div>
+  </div>
+
+  <!-- Floating controls top-right -->
+  <div class="float-controls-right">
+    <div class="view-toggle">
+      <button class="vt active" id="viewMetros">Metros</button>
+      <button class="vt" id="viewStates">States</button>
+    </div>
+    <select id="mapMetric">
+      <option value="zhvi_current">Home Price</option>
+      <option value="zori_rent">Rent</option>
+      <option value="median_hh_income">Income</option>
+      <option value="price_to_income" selected>Price-to-Income</option>
+      <option value="payment_pct_income">Payment % Income</option>
+      <option value="population">Population</option>
+      <option value="r_median_dom">Days on Market</option>
+      <option value="fema_risk_score">Disaster Risk</option>
+      <option value="median_aqi">Air Quality</option>
+      <option value="bachelors_pct">Education</option>
+    </select>
+  </div>  <!-- end float-controls-right -->
+
+  <!-- Floating detail card (hidden by default) -->
+  <div id="detailCard" class="float-card hidden">
+    <button class="card-close" id="cardClose">&times;</button>
+    <h2 id="cardTitle"></h2>
+    <div class="card-stats" id="cardStats"></div>
+    <div class="card-tabs">
+      <button class="ctab active" data-tab="affordability">Affordability</button>
+      <button class="ctab" data-tab="market">Market</button>
+      <button class="ctab" data-tab="economy">Economy</button>
+      <button class="ctab" data-tab="quality">Quality</button>
+    </div>
+    <div class="card-tab-content" id="cardTabContent"></div>
+  </div>
+
+  <!-- Floating compare toggle -->
+  <button class="float-compare-btn" id="compareToggle">Compare</button>
+
+  <!-- Compare panel (slide in) -->
+  <div id="comparePanel" class="compare-panel hidden">
+    <div class="compare-header">
+      <h3>Compare</h3>
+      <button class="card-close" id="compareClose">&times;</button>
+    </div>
+    <div class="compare-selects">
+      <select id="compareA"></select>
+      <span class="vs">vs</span>
+      <select id="compareB"></select>
+    </div>
+    <div class="compare-body" id="compareBody"></div>
+  </div>
+
+  <!-- Floating legend -->
+  <div class="float-legend" id="legend">
+    <div class="legend-title" id="legendTitle"></div>
+    <div class="legend-bar">
+      <div class="legend-gradient" id="legendGradient"></div>
+      <div class="legend-labels">
+        <span id="legendMin"></span>
+        <span id="legendMax"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credit -->
+  <div class="float-credit">
+    <a href="https://keelp2.github.io" target="_blank">Peter Keel</a> · 377 metros · Zillow · Redfin · Census · FRED
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
