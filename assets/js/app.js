@@ -130,8 +130,9 @@ const METRIC_TIPS = {
 
 function statCard(key, val) {
   const m = METRICS[key];
-  const tip = METRIC_TIPS[key] ? `<div class="tip">${METRIC_TIPS[key]}</div>` : "";
-  return `<div class="stat-card"><div class="label">${m ? m.label : key}</div><div class="value">${fmtVal(val, key)}</div>${tip}</div>`;
+  const infoBtn = METRIC_TIPS[key] ? `<button class="info-btn" onclick="this.parentElement.nextElementSibling.nextElementSibling.classList.toggle('show')">ⓘ</button>` : "";
+  const infoText = METRIC_TIPS[key] ? `<div class="info-text">${METRIC_TIPS[key]}</div>` : "";
+  return `<div class="stat-card"><div class="label">${m ? m.label : key}${infoBtn}</div><div class="value">${fmtVal(val, key)}</div>${infoText}</div>`;
 }
 
 // ── Color scale ──
@@ -508,17 +509,6 @@ function setupEvents() {
 const style = document.createElement("style");
 style.textContent = `.dark-tooltip { background: white !important; color: #1e293b !important; border: 1px solid #e2e8f0 !important; border-radius: 6px !important; font-family: Inter, sans-serif !important; font-size: 0.8rem !important; padding: 8px 12px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important; } .dark-tooltip::before { border-top-color: #e2e8f0 !important; }`;
 document.head.appendChild(style);
-
-// ── Tooltip positioning ──
-document.addEventListener("mouseover", e => {
-  const card = e.target.closest(".stat-card");
-  if (!card) return;
-  const tip = card.querySelector(".tip");
-  if (!tip) return;
-  const rect = card.getBoundingClientRect();
-  tip.style.left = rect.left + "px";
-  tip.style.top = (rect.bottom + 6) + "px";
-});
 
 // ── Go ──
 init();
